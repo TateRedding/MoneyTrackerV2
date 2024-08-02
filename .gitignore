@@ -1,0 +1,4 @@
+*.db
+database/__pycache__/
+popups/__pycache__/
+tabs/__pycache__/
