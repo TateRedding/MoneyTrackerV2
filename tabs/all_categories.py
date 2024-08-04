@@ -15,16 +15,16 @@ class AllCategories:
         tk.Label(self.frame, text='Subcategories').grid(row=0, column=0, pady=10)
         tk.Label(self.frame, text='Main Categories').grid(row=0, column=1, pady=10)
 
-        self.subcategory_tree = ttk.Treeview(self.frame, columns=('ID', 'Category', 'Parent Category'), show='headings')
-        self.subcategory_tree.heading('ID', text='ID')
-        self.subcategory_tree.heading('Category', text='Category')
-        self.subcategory_tree.heading('Parent Category', text='Parent Category')
+        self.child_category_tree = ttk.Treeview(self.frame, columns=('ID', 'Category', 'Parent Category'), show='headings')
+        self.child_category_tree.heading('ID', text='ID')
+        self.child_category_tree.heading('Category', text='Category')
+        self.child_category_tree.heading('Parent Category', text='Parent Category')
 
-        self.subcategory_tree.column('ID', width=80, stretch=False)
-        self.subcategory_tree.column('Category', width=300, stretch=False)
-        self.subcategory_tree.column('Parent Category', width=300, stretch=False)
+        self.child_category_tree.column('ID', width=80, stretch=False)
+        self.child_category_tree.column('Category', width=300, stretch=False)
+        self.child_category_tree.column('Parent Category', width=300, stretch=False)
 
-        self.subcategory_tree.grid(row=1, column=0, sticky='ns')
+        self.child_category_tree.grid(row=1, column=0, sticky='ns')
 
         self.parent_tree = ttk.Treeview(self.frame, columns=('ID', 'Category', 'Type'), show='headings')
         self.parent_tree.heading('ID', text='ID')
@@ -37,22 +37,22 @@ class AllCategories:
 
         self.parent_tree.grid(row=1, column=1, sticky='ns')
 
-        self.subcategory_tree.bind('<<TreeviewSelect>>', self.on_subcategory_row_select)
+        self.child_category_tree.bind('<<TreeviewSelect>>', self.on_child_category_row_select)
         self.parent_tree.bind('<<TreeviewSelect>>', self.on_parent_row_select)
 
         self.update_categories()
 
         self.frame.pack(fill=tk.BOTH, expand=True)
 
-    def on_subcategory_row_select(self, event=None):
+    def on_child_category_row_select(self, event=None):
         return
     
     def on_parent_row_select(self, event=None):
         return
     
     def update_categories(self):        
-        for item in self.subcategory_tree.get_children():
-            self.subcategory_tree.delete(item)
+        for item in self.child_category_tree.get_children():
+            self.child_category_tree.delete(item)
 
         for item in self.parent_tree.get_children():
             self.parent_tree.delete(item)
@@ -64,8 +64,8 @@ class AllCategories:
             parent = row[4]
             
             if not type and parent:
-                subcategory_tree_values = [id, name, parent]
-                self.subcategory_tree.insert('', tk.END, values=subcategory_tree_values)
+                child_category_tree_values = [id, name, parent]
+                self.child_category_tree.insert('', tk.END, values=child_category_tree_values)
             else:
                 parent_tree_values = [id, name, type]
                 self.parent_tree.insert('', tk.END, values=parent_tree_values)

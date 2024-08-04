@@ -10,7 +10,7 @@ class Upload:
         self.conn = conn
         self.account_data = account_data
         self.update_transactions = update_transactions
-        self.file_path = tk.StringVar(value='')
+        self.file_path = tk.StringVar()
         self.new_record_count = tk.IntVar(value=0)
         self.setup_tab()
 
@@ -51,7 +51,7 @@ class Upload:
             filetypes=(('CSV files', '*.csv'), ('CSV files', '*.CSV'), ('All files', '*.*'))
         )
         if file:
-            self.file_path.set(file)
+            self.file_path.set(value=file)
             self.file_name_label.config(text=f'Selected file: {file}')
     
     def process_file(self):

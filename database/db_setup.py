@@ -61,11 +61,11 @@ def create_tables(conn, cursor):
 def create_triggers(conn, cursor):
     try:
         cursor.execute('''
-        CREATE TRIGGER IF NOT EXISTS enforce_single_level_subcategory_insert
+        CREATE TRIGGER IF NOT EXISTS enforce_single_level_child_category_insert
         BEFORE INSERT ON categories
         FOR EACH ROW
         BEGIN
-            SELECT RAISE(FAIL, 'A subcategory cannot be a parent')
+            SELECT RAISE(FAIL, 'A child category cannot be a parent')
             WHERE NEW.parent_id IS NOT NULL AND EXISTS (
                 SELECT 1
                 FROM categories
@@ -76,11 +76,11 @@ def create_triggers(conn, cursor):
         ''')
 
         cursor.execute('''
-        CREATE TRIGGER IF NOT EXISTS enforce_single_level_subcategory_update
+        CREATE TRIGGER IF NOT EXISTS enforce_single_level_child_category_update
         BEFORE UPDATE OF parent_id ON categories
         FOR EACH ROW
         BEGIN
-            SELECT RAISE(FAIL, 'A subcategory cannot be a parent')
+            SELECT RAISE(FAIL, 'A child category cannot be a parent')
             WHERE NEW.parent_id IS NOT NULL AND EXISTS (
                 SELECT 1
                 FROM categories
@@ -180,7 +180,7 @@ def seed_database(conn, cursor):
         # Trigger testing
         # cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?);', ('Some Value', 7))
         # cursor.execute('UPDATE categories SET parent_id = ? WHERE id = ?;', (3, 4))
-        # cursor.execute('INSERT INTO categories (name, parent_id, type) VALUES (?, ?, ?);', ('Some Value', 1, 'subcategory'))
+        # cursor.execute('INSERT INTO categories (name, parent_id, type) VALUES (?, ?, ?);', ('Some Value', 1, 'child_category'))
         # cursor.execute('UPDATE categories SET parent_id = ? WHERE id = ?;', (1, 2))
         # cursor.execute('UPDATE categories SET type = ? WHERE id = ?;', ('Some Value', 8))
         # cursor.execute('INSERT INTO categories (name) VALUES (?);', ('Some Value',))
