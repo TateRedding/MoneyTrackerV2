@@ -9,7 +9,7 @@ class AllIdentifiers:
         self.setup_tab()
 
     def setup_tab(self):
-        tk.Label(self.frame, text="All Identifiers", padx=20, pady=10).pack()
+        tk.Label(self.frame, text='All Identifiers').pack(pady=10)
 
         self.tree = ttk.Treeview(self.frame, columns=('ID', 'Phrase', 'Category', 'Parent Category'), show='headings')
         self.tree.heading('ID', text='ID')
@@ -22,10 +22,10 @@ class AllIdentifiers:
         self.tree.column('Category', width=300, stretch=False)
         self.tree.column('Parent Category', width=300, stretch=False)
 
-        self.tree.bind("<<TreeviewSelect>>", self.on_row_select)
+        self.tree.bind('<<TreeviewSelect>>', self.on_row_select)
         self.update_identifiers()
 
-        self.tree.pack(fill=tk.Y, expand=True, padx=20, anchor='center')
+        self.tree.pack(fill=tk.Y, expand=True, padx=20, pady=10, anchor='center')
     
     def on_row_select(self, event=None):
         return

@@ -1,20 +1,23 @@
+import sqlite3
+
 def drop_tables(conn, cursor):
     try:
-        cursor.execute('DROP TABLE IF EXISTS accounts')
-        cursor.execute('DROP TABLE IF EXISTS identifiers')
-        cursor.execute('DROP TABLE IF EXISTS categories')
-        cursor.execute('DROP TABLE IF EXISTS transactions')
+        cursor.execute('DROP TABLE IF EXISTS accounts;')
+        cursor.execute('DROP TABLE IF EXISTS identifiers;')
+        cursor.execute('DROP TABLE IF EXISTS categories;')
+        cursor.execute('DROP TABLE IF EXISTS transactions;')
         conn.commit()
-    except Exception as e:
-        print(f"Error dropping tables: {e}")
+    except sqlite3.Error as e:
+        print(f'Error dropping tables: {e}')
 
 def create_tables(conn, cursor):
     try:
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS accounts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name VARCHAR(128) UNIQUE NOT NULL
-        )
+            name VARCHAR(128) UNIQUE NOT NULL,
+            type VARCHAR(32) NOT NULL
+        );
         ''')
 
         cursor.execute('''
@@ -25,7 +28,7 @@ def create_tables(conn, cursor):
             parent_id INTEGER,
             FOREIGN KEY (parent_id) REFERENCES categories (id)
             UNIQUE(name, parent_id)
-        )
+        );
         ''')
 
         cursor.execute('''
@@ -34,7 +37,7 @@ def create_tables(conn, cursor):
             phrase TEXT UNIQUE NOT NULL,
             category_id INTEGER NOT NULL,
             FOREIGN KEY (category_id) REFERENCES categories (id)
-        )
+        );
         ''')
 
         cursor.execute('''
@@ -48,12 +51,12 @@ def create_tables(conn, cursor):
             FOREIGN KEY (account_id) REFERENCES accounts (id),
             FOREIGN KEY (identifier_id) REFERENCES identifiers (id)
             UNIQUE(amount, description, date, account_id)
-        )
+        );
         ''')
 
         conn.commit()
-    except Exception as e:
-        print(f"Error creating tables: {e}")
+    except sqlite3.Error as e:
+        print(f'Error creating tables: {e}')
 
 def create_triggers(conn, cursor):
     try:
@@ -127,65 +130,65 @@ def create_triggers(conn, cursor):
         ''')
 
         conn.commit()
-    except Exception as e:
-        print(f"Error creating triggers: {e}")
+    except sqlite3.Error as e:
+        print(f'Error creating triggers: {e}')
 
 def seed_database(conn, cursor):
     try:
         # Accounts
-        cursor.execute('INSERT INTO accounts (name) VALUES (?)', ('Discover Credit',))
-        cursor.execute('INSERT INTO accounts (name) VALUES (?)', ('First Bank Checking',))
-        cursor.execute('INSERT INTO accounts (name) VALUES (?)', ('Chase Credit',))
-        cursor.execute('INSERT INTO accounts (name) VALUES (?)', ('Wells Fargo Checking',))
-        cursor.execute('INSERT INTO accounts (name) VALUES (?)', ('Wells Fargo Credit',))
+        cursor.execute('INSERT INTO accounts (name, type) VALUES (?, ?);', ('Discover Credit', 'credit'))
+        cursor.execute('INSERT INTO accounts (name, type) VALUES (?, ?);', ('Chase Credit', 'credit'))
+        cursor.execute('INSERT INTO accounts (name, type) VALUES (?, ?);', ('First Bank Checking', 'checking'))
+        cursor.execute('INSERT INTO accounts (name, type) VALUES (?, ?);', ('Wells Fargo Checking', 'checking'))
+        cursor.execute('INSERT INTO accounts (name, type) VALUES (?, ?);', ('Wells Fargo Credit', 'checking'))
 
         # Top-level Categories
-        cursor.execute('INSERT INTO categories (name, type) VALUES (?, ?)', ('Subscriptions', 'payments'))
-        cursor.execute('INSERT INTO categories (name, type) VALUES (?, ?)', ('Groceries', 'payments'))
-        cursor.execute('INSERT INTO categories (name, type) VALUES (?, ?)', ('Bills', 'payments'))
-        cursor.execute('INSERT INTO categories (name, type) VALUES (?, ?)', ('Saving Transfer', 'external transfer'))
-        cursor.execute('INSERT INTO categories (name, type) VALUES (?, ?)', ('Credit Card Payment', 'internal transfer'))
-        cursor.execute('INSERT INTO categories (name, type) VALUES (?, ?)', ('Paycheck', 'income'))
+        cursor.execute('INSERT INTO categories (name, type) VALUES (?, ?);', ('Subscriptions', 'payments'))
+        cursor.execute('INSERT INTO categories (name, type) VALUES (?, ?);', ('Groceries', 'payments'))
+        cursor.execute('INSERT INTO categories (name, type) VALUES (?, ?);', ('Bills', 'payments'))
+        cursor.execute('INSERT INTO categories (name, type) VALUES (?, ?);', ('Saving Transfer', 'external transfer'))
+        cursor.execute('INSERT INTO categories (name, type) VALUES (?, ?);', ('Credit Card Payment', 'internal transfer'))
+        cursor.execute('INSERT INTO categories (name, type) VALUES (?, ?);', ('Paycheck', 'income'))
 
         # Second-level Categories
-        cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?)', ('Netflix', 1))
-        cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?)', ('King Soopers', 2))
-        cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?)', ('Sprouts', 2))
-        cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?)', ('Electricity', 3))
-        cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?)', ('First Bank Savings Allocation', 4))
-        cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?)', ('WF Credit Payment', 5))
+        cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?);', ('Netflix', 1))
+        cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?);', ('King Soopers', 2))
+        cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?);', ('Sprouts', 2))
+        cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?);', ('Electricity', 3))
+        cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?);', ('First Bank Savings Allocation', 4))
+        cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?);', ('WF Credit Payment', 5))
         
         # Identifiers
-        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?)', ('NETFLIX', 7))
-        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?)', ('KING SOOPERS', 8))
-        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?)', ('SPROUTS', 9))
-        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?)', ('PROG DIRECT', 3))
-        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?)', ('ELECTRIC BILL', 10))
-        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?)', ('TRANSFER TO FIRST BANK SAVINGS', 11))
-        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?)', ('ONLINE PAYMENT THANK YOU', 12))
-        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?)', ('MARIGOLD', 6))
+        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?);', ('NETFLIX', 7))
+        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?);', ('KING SOOP', 8))
+        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?);', ('SPROUTS', 9))
+        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?);', ('PROG DIRECT', 3))
+        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?);', ('ELECTRIC BILL', 10))
+        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?);', ('TRANSFER TO FIRST BANK SAVINGS', 11))
+        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?);', ('ONLINE PAYMENT THANK YOU', 12))
+        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?);', ('MARIGOLD', 6))
 
         # Transactions
-        cursor.execute('INSERT INTO transactions (date, amount, description, identifier_id, account_id) VALUES (?, ?, ?, ?, ?)', ('2024-01-15', -50.00, 'King Soopers Grocery Purchase', 2, 1))
-        cursor.execute('INSERT INTO transactions (date, amount, description, identifier_id, account_id) VALUES (?, ?, ?, ?, ?)', ('2024-01-20', -30.00, 'Sprouts Grocery Purchase', 3, 1))
-        cursor.execute('INSERT INTO transactions (date, amount, description, identifier_id, account_id) VALUES (?, ?, ?, ?, ?)', ('2024-02-05', -120.00, 'Electricity Bill Payment', 5, 1))
-        cursor.execute('INSERT INTO transactions (date, amount, description, identifier_id, account_id) VALUES (?, ?, ?, ?, ?)', ('2024-02-10', -10.00, 'Netflix Renewal', 1, 3))
-        cursor.execute('INSERT INTO transactions (date, amount, description, identifier_id, account_id) VALUES (?, ?, ?, ?, ?)', ('2024-03-01', -15.00, 'Online Payment Thank You', 7, 4))
-        cursor.execute('INSERT INTO transactions (date, amount, description, identifier_id, account_id) VALUES (?, ?, ?, ?, ?)', ('2024-03-01', 2000.00, 'Marigold Paycheck', 8, 1))
+        cursor.execute('INSERT INTO transactions (date, amount, description, identifier_id, account_id) VALUES (?, ?, ?, ?, ?);', ('2024-01-15', -50.00, 'King Soopers Grocery Purchase', 2, 1))
+        cursor.execute('INSERT INTO transactions (date, amount, description, identifier_id, account_id) VALUES (?, ?, ?, ?, ?);', ('2024-01-20', -30.00, 'Sprouts Grocery Purchase', 3, 1))
+        cursor.execute('INSERT INTO transactions (date, amount, description, identifier_id, account_id) VALUES (?, ?, ?, ?, ?);', ('2024-02-05', -120.00, 'Electricity Bill Payment', 5, 1))
+        cursor.execute('INSERT INTO transactions (date, amount, description, identifier_id, account_id) VALUES (?, ?, ?, ?, ?);', ('2024-02-10', -10.00, 'Netflix Renewal', 1, 3))
+        cursor.execute('INSERT INTO transactions (date, amount, description, identifier_id, account_id) VALUES (?, ?, ?, ?, ?);', ('2024-03-01', -15.00, 'Online Payment Thank You', 7, 4))
+        cursor.execute('INSERT INTO transactions (date, amount, description, identifier_id, account_id) VALUES (?, ?, ?, ?, ?);', ('2024-03-01', 2000.00, 'Marigold Paycheck', 8, 1))
         conn.commit()
 
         # Trigger testing
-        # cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?)', ('Some Value', 7))
-        # cursor.execute('UPDATE categories SET parent_id = ? WHERE id = ?', (3, 4))
-        # cursor.execute('INSERT INTO categories (name, parent_id, type) VALUES (?, ?, ?)', ('Some Value', 1, 'subcategory'))
-        # cursor.execute('UPDATE categories SET parent_id = ? WHERE id = ?', (1, 2))
-        # cursor.execute('UPDATE categories SET type = ? WHERE id = ?', ('Some Value', 8))
-        # cursor.execute('INSERT INTO categories (name) VALUES (?)', ('Some Value',))
-        # cursor.execute('UPDATE categories set parent_id = ? WHERE id = ?', (None, 10))
-        # cursor.execute('UPDATE categories set type = ? WHERE id = ?', (None, 5))
+        # cursor.execute('INSERT INTO categories (name, parent_id) VALUES (?, ?);', ('Some Value', 7))
+        # cursor.execute('UPDATE categories SET parent_id = ? WHERE id = ?;', (3, 4))
+        # cursor.execute('INSERT INTO categories (name, parent_id, type) VALUES (?, ?, ?);', ('Some Value', 1, 'subcategory'))
+        # cursor.execute('UPDATE categories SET parent_id = ? WHERE id = ?;', (1, 2))
+        # cursor.execute('UPDATE categories SET type = ? WHERE id = ?;', ('Some Value', 8))
+        # cursor.execute('INSERT INTO categories (name) VALUES (?);', ('Some Value',))
+        # cursor.execute('UPDATE categories set parent_id = ? WHERE id = ?;', (None, 10))
+        # cursor.execute('UPDATE categories set type = ? WHERE id = ?;', (None, 5))
 
-    except Exception as e:
-        print(f"Error seeding database: {e}")
+    except sqlite3.Error as e:
+        print(f'Error seeding database: {e}')
 
 def init_db(conn, cursor):
     try:
@@ -193,5 +196,5 @@ def init_db(conn, cursor):
         create_tables(conn, cursor)
         create_triggers(conn, cursor)
         seed_database(conn, cursor)
-    except Exception as e:
-        print(f"Error initializing database: {e}")
+    except sqlite3.Error as e:
+        print(f'Error initializing database: {e}')

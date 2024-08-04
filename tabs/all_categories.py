@@ -12,8 +12,8 @@ class AllCategories:
         self.frame.columnconfigure(0, weight=1)
         self.frame.columnconfigure(1, weight=1)
 
-        tk.Label(self.frame, text="Subcategories").grid(row=0, column=0, padx=20, pady=10)
-        tk.Label(self.frame, text="Main Categories").grid(row=0, column=1, padx=20, pady=10)
+        tk.Label(self.frame, text='Subcategories').grid(row=0, column=0, pady=10)
+        tk.Label(self.frame, text='Main Categories').grid(row=0, column=1, pady=10)
 
         self.subcategory_tree = ttk.Treeview(self.frame, columns=('ID', 'Category', 'Parent Category'), show='headings')
         self.subcategory_tree.heading('ID', text='ID')
@@ -37,8 +37,8 @@ class AllCategories:
 
         self.parent_tree.grid(row=1, column=1, sticky='ns')
 
-        self.subcategory_tree.bind("<<TreeviewSelect>>", self.on_subcategory_row_select)
-        self.parent_tree.bind("<<TreeviewSelect>>", self.on_parent_row_select)
+        self.subcategory_tree.bind('<<TreeviewSelect>>', self.on_subcategory_row_select)
+        self.parent_tree.bind('<<TreeviewSelect>>', self.on_parent_row_select)
 
         self.update_categories()
 

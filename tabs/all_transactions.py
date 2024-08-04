@@ -10,7 +10,7 @@ class AllTransactions:
         self.setup_tab()
 
     def setup_tab(self):
-        tk.Label(self.frame, text="All Transactions", padx=20, pady=10).pack()
+        tk.Label(self.frame, text='All Transactions').pack(pady=10)
 
         self.tree = ttk.Treeview(self.frame, columns=('Date', 'Amount', 'Category', 'Parent Category', 'Description', 'Account'), show='headings')
         self.tree.heading('Date', text='Date')
@@ -27,15 +27,15 @@ class AllTransactions:
         self.tree.column('Description', width=800)
         self.tree.column('Account', width=170, stretch=False)
 
-        self.tree.bind("<<TreeviewSelect>>", self.on_row_select)
+        self.tree.bind('<<TreeviewSelect>>', self.on_row_select)
         self.update_transactions()
 
-        self.tree.pack(fill=tk.Y, expand=True, padx=20, anchor='center')
+        self.tree.pack(fill=tk.Y, expand=True, padx=20, pady=10, anchor='center')
 
     def on_row_select(self, event=None):
         return
     
-    def update_transactions(self):        
+    def update_transactions(self):
         for item in self.tree.get_children():
             self.tree.delete(item)
         
