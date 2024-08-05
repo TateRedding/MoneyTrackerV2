@@ -41,9 +41,9 @@ class App:
 
     def create_tabs(self):
         self.all_categories = AllCategories(self.notebook, self.category_data)
-        self.all_identidfiers = AllIdentifiers(self.notebook, self.identifier_data)
+        self.all_identifiers = AllIdentifiers(self.notebook, self.identifier_data)
         self.all_transactions = AllTransactions(self.notebook, self.transaction_data)
-        self.identify_transactions = IdentifyTransactions(self.notebook, self.conn, self.cursor, self.transaction_data, self.category_data, self.update_catagories)
+        self.identify_transactions = IdentifyTransactions(self.notebook, self.conn, self.cursor, self.transaction_data, self.category_data, self.update_catagories, self.update_identifiers, self.update_transactions)
         self.sql = SQL(self.notebook, self.conn, self.cursor)
         self.upload = Upload(self.notebook, self.conn, self.cursor, self.account_data, self.update_transactions)
 
@@ -51,7 +51,7 @@ class App:
         self.notebook.add(self.upload.frame, text='Upload')
         self.notebook.add(self.identify_transactions.frame, text='Identify Transactions')
         self.notebook.add(self.all_categories.frame, text='Categories')
-        self.notebook.add(self.all_identidfiers.frame, text='Identifiers')
+        self.notebook.add(self.all_identifiers.frame, text='Identifiers')
         self.notebook.add(self.sql.frame, text='SQL')
         return
 
@@ -65,6 +65,9 @@ class App:
     
     def update_identifiers(self):
         self.identifier_data = idens.get_all_identifiers(self.cursor)
+        self.all_identifiers.identifier_data = self.identifier_data
+
+        self.all_identifiers.update_identifiers()
 
     def update_transactions(self):
         self.transaction_data = trans.get_all_transactions(self.cursor)

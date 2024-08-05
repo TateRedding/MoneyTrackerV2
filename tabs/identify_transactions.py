@@ -1,19 +1,24 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, simpledialog
 from datetime import datetime
-import database.categories as cats
 from popups.parent_category_popup import ParentCategoryPopup
+import database.categories as cats
+import database.identifiers as idens
 
 class IdentifyTransactions:
-    def __init__(self, parent, conn, cursor, transaction_data, category_data, update_categories):
+    def __init__(self, parent, conn, cursor, transaction_data, category_data, update_categories, update_identifiers, update_transactions):
         self.frame = ttk.Frame(parent)
         self.conn = conn
         self.cursor = cursor
         self.transaction_data = transaction_data
         self.category_data = category_data
         self.update_categories = update_categories
+        self.update_identifiers = update_identifiers
+        self.update_transactions = update_transactions
 
         self.parent_categories = []
+        self.parent_category_map = {}
+        self.child_category_map = {}
 
         self.setup_tab()
 
@@ -83,9 +88,11 @@ class IdentifyTransactions:
         selected_parent_category = self.parent_category_var.get()
         if selected_parent_category:
             self.add_child_category_button.config(text=f'Add child category for {selected_parent_category}', state=tk.NORMAL)
-            child_categories = [category[1] for category in self.category_data if category[4] == selected_parent_category]
+            self.child_category_map = {category[1]: category[0] for category in self.category_data if category[4] == selected_parent_category}
+            child_categories = list(self.child_category_map.keys())
             child_categories.sort()
             self.child_category_dropdown['values'] = child_categories
+            self.child_category_var.set(value='')
         self.check_inputs()
     
     def update_unidentified_transactions(self):
@@ -103,7 +110,8 @@ class IdentifyTransactions:
 
     def update_parent_categories(self):
         if self.category_data:
-            self.parent_categories = [category[1] for category in self.category_data if not category[3]]
+            self.parent_category_map = {category[1]: category[0] for category in self.category_data if not category[3]}
+            self.parent_categories = list(self.parent_category_map.keys())
             self.parent_categories.sort()
             self.parent_category_dropdown['values'] = self.parent_categories
 
@@ -114,7 +122,7 @@ class IdentifyTransactions:
             self.submit_button.config(state=tk.DISABLED)
 
     def add_parent_category(self):
-        name, type = self.prompt_for_new_category()
+        name, type = self.prompt_for_new_parent_category()
         if name:
             if not bool(cats.get_category_by_name(self.cursor, name)):
                 cats.add_category(self.conn, self.cursor, name, None, type)
@@ -122,18 +130,72 @@ class IdentifyTransactions:
                 self.parent_category_var.set(value=name)
                 self.on_parent_category_selected()
             else:
-                messagebox.showinfo("Info", f"The category '{name}' already exists.")
+                messagebox.showinfo('Info', f"The category '{name}' already exists.")
     
-    def prompt_for_new_category(self):
+    def prompt_for_new_parent_category(self):
         new_parent_category_popup = ParentCategoryPopup(self.frame, self.cursor, self.category_data)
         self.frame.wait_window(new_parent_category_popup.top)
         return new_parent_category_popup.name, new_parent_category_popup.type
     
     def add_child_category(self):
-        return
+        name = self.prompt_for_new_child_category()
+        if name:
+            parent_category_name = self.parent_category_var.get()
+            if parent_category_name:
+                parent_id = self.parent_category_map[parent_category_name]
+                if parent_id:
+                    if not bool(cats.get_category_by_name(self.cursor, name)):
+                        cats.add_category(self.conn, self.cursor, name, parent_id, None)
+                        self.update_categories()
+                        self.on_parent_category_selected()
+                        self.child_category_var.set(name)
+                    else:
+                        messagebox.showinfo('Info', f"The category '{name}' already exists.")
+                else:
+                    messagebox.showinfo('Info', 'The selected parent category was not found. This may be a bug.')
+            else:
+                messagebox.showinfo('Info', 'No parent category is selected.')
+    
+    def prompt_for_new_child_category(self):
+        new_child_category = simpledialog.askstring('New Child Category', 'Enter the new child category name:')
+        return new_child_category
     
     def submit(self):
-        return
+        # Current Bugs:
+        # Need to be able to select "None" for child category, which should also be used as default instead of an empty string
+        # It seems to be only adding it under the parent category, even if a child is selected
+        # Identifiers list has parent and child swapped somehow with the new identifiers
+        # This does not update the transactions at all, likley just need some extra SQL
+        
+        description = self.description_text.cget('text')
+        phrase = self.identify_text.get()
+        parent_category_name = self.parent_category_var.get()
+        child_category_name = self.child_category_var.get()
+
+        if phrase not in description:
+            messagebox.showerror('Error', 'The entered text does not appear in the description. This is case sensitive.')
+            return
+        
+        category_id = 0
+        if child_category_name:
+            category_id = self.child_category_map[child_category_name]
+        elif parent_category_name:
+            category_id = self.parent_category_map[parent_category_name]
+        else:
+            messagebox.showinfo('Info', 'No category was found. This may be a bug.')
+
+        if phrase and category_id:
+            if not bool(idens.get_identifier_by_phrase(self.cursor, phrase)):
+                idens.add_identifier(self.conn, self.cursor, phrase, category_id)
+                self.update_transactions()
+                messagebox.showinfo('Success', f"Identifier '{phrase}' added for the category {parent_category_name if parent_category_name else child_category_name}.")
+                self.reset_form()
+                self.update_identifiers()
+                self.update_transactions()
+            else:
+                messagebox.showinfo('Info', f"Identifier '{phrase}' already exists.")
+        else:
+            messagebox.showinfo('Info', 'Please provide an identifier phrase and a category.')
     
     def reset_form(self):
         self.description_text.config(text='')

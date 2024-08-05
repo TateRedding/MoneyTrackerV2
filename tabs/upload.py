@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, messagebox
 from utils.file_parsers import parse_file
 import database.transactions as trans
 
@@ -67,4 +67,4 @@ class Upload:
             self.file_name_label.configure(text='Selected file: None')
             self.update_transactions()
         else:
-            print('Please select a file and an account.')
+            messagebox.showinfo('Info', 'Please select a file and an account.')

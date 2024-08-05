@@ -8,7 +8,7 @@ def drop_tables(conn, cursor):
         cursor.execute('DROP TABLE IF EXISTS transactions;')
         conn.commit()
     except sqlite3.Error as e:
-        print(f'Error dropping tables: {e}')
+        raise RuntimeError(f'Error dropping tables: {e}')
 
 def create_tables(conn, cursor):
     try:
@@ -56,7 +56,7 @@ def create_tables(conn, cursor):
 
         conn.commit()
     except sqlite3.Error as e:
-        print(f'Error creating tables: {e}')
+        raise RuntimeError(f'Error creating tables: {e}')
 
 def create_triggers(conn, cursor):
     try:
@@ -131,7 +131,7 @@ def create_triggers(conn, cursor):
 
         conn.commit()
     except sqlite3.Error as e:
-        print(f'Error creating triggers: {e}')
+        raise RuntimeError(f'Error creating triggers: {e}')
 
 def seed_database(conn, cursor):
     try:
@@ -188,7 +188,7 @@ def seed_database(conn, cursor):
         # cursor.execute('UPDATE categories set type = ? WHERE id = ?;', (None, 5))
 
     except sqlite3.Error as e:
-        print(f'Error seeding database: {e}')
+        raise RuntimeError(f'Error seeding database: {e}')
 
 def init_db(conn, cursor):
     try:
@@ -197,4 +197,4 @@ def init_db(conn, cursor):
         create_triggers(conn, cursor)
         seed_database(conn, cursor)
     except sqlite3.Error as e:
-        print(f'Error initializing database: {e}')
+        raise RuntimeError(f'Error initializing database: {e}')

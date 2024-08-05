@@ -16,7 +16,7 @@ def get_all_transactions(cursor):
         ''')
         return cursor.fetchall()
     except sqlite3.Error as e:
-        print(f'Error fetching transactions: {e}')
+        raise RuntimeError(f'Error fetching transactions: {e}')
 
 def add_transactions(conn, cursor, data):
     try:
