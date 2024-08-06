@@ -91,8 +91,8 @@ class IdentifyTransactions:
             self.child_category_map = {category[1]: category[0] for category in self.category_data if category[4] == selected_parent_category}
             child_categories = list(self.child_category_map.keys())
             child_categories.sort()
-            self.child_category_dropdown['values'] = child_categories
-            self.child_category_var.set(value='')
+            self.child_category_dropdown['values'] = ['None'] + child_categories
+            self.child_category_var.set(value='None')
         self.check_inputs()
     
     def update_unidentified_transactions(self):
@@ -160,13 +160,7 @@ class IdentifyTransactions:
         new_child_category = simpledialog.askstring('New Child Category', 'Enter the new child category name:')
         return new_child_category
     
-    def submit(self):
-        # Current Bugs:
-        # Need to be able to select "None" for child category, which should also be used as default instead of an empty string
-        # It seems to be only adding it under the parent category, even if a child is selected
-        # Identifiers list has parent and child swapped somehow with the new identifiers
-        # This does not update the transactions at all, likley just need some extra SQL
-        
+    def submit(self):        
         description = self.description_text.cget('text')
         phrase = self.identify_text.get()
         parent_category_name = self.parent_category_var.get()
@@ -177,7 +171,7 @@ class IdentifyTransactions:
             return
         
         category_id = 0
-        if child_category_name:
+        if child_category_name and not child_category_name == 'None':
             category_id = self.child_category_map[child_category_name]
         elif parent_category_name:
             category_id = self.parent_category_map[parent_category_name]
@@ -188,7 +182,7 @@ class IdentifyTransactions:
             if not bool(idens.get_identifier_by_phrase(self.cursor, phrase)):
                 idens.add_identifier(self.conn, self.cursor, phrase, category_id)
                 self.update_transactions()
-                messagebox.showinfo('Success', f"Identifier '{phrase}' added for the category {parent_category_name if parent_category_name else child_category_name}.")
+                messagebox.showinfo('Success', f"Identifier '{phrase}' added for the category {child_category_name if child_category_name and not child_category_name == 'None' else parent_category_name}.")
                 self.reset_form()
                 self.update_identifiers()
                 self.update_transactions()

@@ -34,6 +34,13 @@ def identify_transaction_description(cursor, description):
 def add_identifier(conn, cursor, phrase, category_id):
     try:
         cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?)', (phrase, category_id,))
+        identifier_id = cursor.lastrowid
+        cursor.execute('''
+            UPDATE transactions
+            SET identifier_id = ?
+            WHERE description LIKE '%' || ? || '%'
+            AND identifier_id IS NULL
+        ''', (identifier_id, phrase))
         conn.commit()
     except sqlite3.Error as e:
         raise RuntimeError(f'An error occurred while adding a new identifier: {e}')

@@ -37,7 +37,7 @@ class AllIdentifiers:
         for row in self.identifier_data:
             id = row[0]
             phrase = row[1]
-            cat = row[4]
-            parent = row[3]
+            cat = row[3]
+            parent = row[4]
             tree_values = [id, phrase, cat, parent]
             self.tree.insert('', tk.END, values=tree_values)
