@@ -32,7 +32,6 @@ def setup_month_dropdown(frame, month_var, month_map, on_month_selected):
     month_dropdown = ttk.Combobox(frame, textvariable=month_var)
     update_month_dropdown(month_dropdown, month_map)
     month_dropdown.bind("<<ComboboxSelected>>", on_month_selected)
-    month_dropdown.pack(padx=10, pady=5)
     return month_dropdown
 
 def update_month_dropdown(menu, month_map):

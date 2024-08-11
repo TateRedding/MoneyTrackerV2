@@ -19,7 +19,8 @@ class TotalsByMonth:
         tk.Label(self.frame, text='Select Month:').pack(padx=10, pady=5)
         
         self.month_var = tk.StringVar()
-        self.month_menu = monthly.setup_month_dropdown(self.frame, self.month_var, self.month_map, self.on_month_selected)
+        self.month_dropdown = monthly.setup_month_dropdown(self.frame, self.month_var, self.month_map, self.on_month_selected)
+        self.month_dropdown.pack(padx=10, pady=5)
 
         self.treeview_frame = tk.Frame(self.frame)
         self.treeview_frame.pack(fill=tk.BOTH, expand=True)
@@ -97,7 +98,7 @@ class TotalsByMonth:
 
     def update_monthly_data(self):
         self.month_map = monthly.get_month_map(self.cursor)
-        monthly.update_month_dropdown(self.month_menu, self.month_map)
+        monthly.update_month_dropdown(self.month_dropdown, self.month_map)
         if self.selected_month in self.month_map.values():
             self.update_treeviews()
         else:

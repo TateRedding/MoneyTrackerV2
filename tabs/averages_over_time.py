@@ -1,11 +1,77 @@
 import tkinter as tk
 from tkinter import ttk
+import database.categories as cats
+import database.transactions as trans
+import tabs.monthly_data as monthly
 
 class AveragesOverTime:
     def __init__(self, parent, cursor):
         self.frame = tk.Frame(parent)
         self.cursor = cursor
+        self.month_map = monthly.get_month_map(self.cursor)
+        self.selected_start_month = None
+        self.selected_end_month = None
+        self.parent_categories = [row[1] for row in cats.get_all_categories(self.cursor) if not row[3]]
+        if self.parent_categories:
+            self.parent_categories.sort()
         self.setup_tab()
 
     def setup_tab(self):
-        self.notebook = ttk.Notebook(self.frame)
+        selection_frame = tk.Frame(self.frame)
+        selection_frame.pack(pady=10)
+
+
+        tk.Label(selection_frame, text='Select Start Month').grid(row=0, column=0, padx=(0, 10))
+        self.start_month_var = tk.StringVar()
+        self.start_month_dropdown = monthly.setup_month_dropdown(selection_frame, self.start_month_var, self.month_map, self.on_month_selected)
+        self.start_month_dropdown.set(value = '')
+        self.start_month_dropdown.grid(row=1, column=0, padx=(0, 10))
+
+        tk.Label(selection_frame, text='Select End Month').grid(row=0, column=1, padx=(10, 0))
+        self.end_month_var = tk.StringVar()
+        self.end_month_dropdown = monthly.setup_month_dropdown(selection_frame, self.end_month_var, self.month_map, self.on_month_selected)
+        self.end_month_dropdown.set(value = '')
+        self.end_month_dropdown.grid(row=1, column=1, padx=(10, 0))
+
+        self.tree = ttk.Treeview(self.frame, columns=[], show='headings')
+        self.tree.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+    
+    def on_month_selected(self, event=None):
+        start_display_month = self.start_month_var.get()
+        end_display_month = self.end_month_var.get()
+        if start_display_month in self.month_map:
+            self.selected_start_month = self.month_map[start_display_month]
+        if end_display_month in self.month_map:
+            self.selected_end_month = self.month_map[end_display_month]
+        if self.selected_start_month and self.selected_end_month:
+            data = trans.get_monthly_totals_with_range(self.cursor, self.selected_start_month, self.selected_end_month)
+            months = []
+            totals = {}
+            for month, category, amount in data:
+                if month not in totals:
+                    totals[month] = {}
+                    months.append(month)
+                if category not in totals[month]:
+                    totals[month][category] = amount
+            if months and totals:
+                self.update_treeview(months, totals)
+
+    def update_treeview(self, months, totals):
+        self.tree.delete(*self.tree.get_children())
+
+        month_strings = [key for key, value in self.month_map.items() if value in months]
+        columns = ['Category'] + month_strings + ['Average']
+        self.tree["columns"] = columns
+
+        for col in columns:
+            self.tree.heading(col, text=col)
+            self.tree.column(col, width=100, anchor=tk.W)
+
+        for category in self.parent_categories:
+            category_name = category.capitalize()
+            month_values = [f'${totals.get(month, {}).get(category, 0):,.2f}' for month in months]
+            grand_total = sum(totals.get(month, {}).get(category, 0) for month in months)
+            average = grand_total / len(months) if months else 0
+            values = (category_name,) + tuple(month_values) + (f'${average:,.2f}',)
+            
+            self.tree.insert("", tk.END, text="1", values=values)
