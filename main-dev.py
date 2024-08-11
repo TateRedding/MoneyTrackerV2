@@ -41,7 +41,7 @@ class App:
         self.root.protocol('WM_DELETE_WINDOW', on_closing)
 
     def create_tabs(self):
-        self.all_categories = AllCategories(self.notebook, self.category_data)
+        self.all_categories = AllCategories(self.notebook, self.conn, self.cursor, self.category_data, self.update_category_data, self.update_identifier_data, self.update_transaction_data)
         self.all_identifiers = AllIdentifiers(self.notebook, self.conn, self.cursor, self.identifier_data, self.category_data, self.update_identifier_data, self.update_transaction_data)
         self.all_transactions = AllTransactions(self.notebook, self.conn, self.cursor, self.transaction_data, self.category_data, self.update_transaction_data, self.update_identifier_data)
         self.identify_transactions = IdentifyTransactions(self.notebook, self.conn, self.cursor, self.transaction_data, self.category_data, self.update_category_data, self.update_identifier_data, self.update_transaction_data)

@@ -24,6 +24,7 @@ class MonthlyData:
     def update_category_data(self):
         self.averages.category_data = self.category_data
         self.averages.update_category_data()
+        self.totals.update_treeviews()
 
 def get_month_map(cursor):
     month_map = {}

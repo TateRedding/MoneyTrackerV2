@@ -46,7 +46,7 @@ class AllIdentifiers:
             else:
                 self.edit_category_button.config(state='disabled')
     
-    def update_identifiers(self):        
+    def update_identifiers(self):   
         for item in self.tree.get_children():
             self.tree.delete(item)
         

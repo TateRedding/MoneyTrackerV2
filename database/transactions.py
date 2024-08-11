@@ -115,7 +115,7 @@ def force_update_category(conn, cursor, transaction_id, category_id):
         cursor.execute('''
             UPDATE transactions
             SET identifier_id = ?
-            WHERE id = ?
+            WHERE id = ?;
         ''', (forced_identifier[0], transaction_id))
         conn.commit()
     except sqlite3.Error as e:
