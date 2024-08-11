@@ -4,12 +4,12 @@ from utils.file_parsers import parse_file
 import database.transactions as trans
 
 class Upload:
-    def __init__(self, parent, conn, cursor, account_data, update_transactions):
+    def __init__(self, parent, conn, cursor, account_data, update_transaction_data):
         self.frame = ttk.Frame(parent)
         self.cursor = cursor
         self.conn = conn
         self.account_data = account_data
-        self.update_transactions = update_transactions
+        self.update_transaction_data = update_transaction_data
         self.file_path = tk.StringVar()
         self.new_record_count = tk.IntVar(value=0)
         self.setup_tab()
@@ -65,6 +65,6 @@ class Upload:
             self.account_var.set(value='')
             self.file_path.set(value='')
             self.file_name_label.configure(text='Selected file: None')
-            self.update_transactions()
+            self.update_transaction_data()
         else:
             messagebox.showinfo('Info', 'Please select a file and an account.')

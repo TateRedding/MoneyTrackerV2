@@ -1,4 +1,5 @@
 import sqlite3
+import database.identifiers as idens
 
 def get_all_transactions(cursor):
     try:
@@ -105,3 +106,17 @@ def add_transactions(conn, cursor, data):
         raise RuntimeError(f"An error occurred while inserting data into the database: {e}")
 
     return inserted_count
+
+def force_update_category(conn, cursor, transaction_id, category_id):
+    forced_identifier = idens.get_forced_identifier(cursor, category_id)
+    if not forced_identifier:
+        forced_identifier = idens.add_forced_identifier(cursor, category_id)
+    try:
+        cursor.execute('''
+            UPDATE transactions
+            SET identifier_id = ?
+            WHERE id = ?
+        ''', (forced_identifier[0], transaction_id))
+        conn.commit()
+    except sqlite3.Error as e:
+        raise RuntimeError(f"An error occurred while updating transaction: {e}") 

@@ -31,6 +31,16 @@ def identify_transaction_description(cursor, description):
     except sqlite3.Error as e:
         raise RuntimeError(f'An error occurred while fetching identifier from description: {e}')
     
+def get_forced_identifier(cursor, category_id):
+    try:
+        string = f'This is a forced identifier for category: {category_id}'
+        cursor.execute('SELECT * FROM identifiers WHERE phrase = ?', (string,))
+        return cursor.fetchone()
+    except sqlite3.Error as e:
+        raise RuntimeError(f"An error occurred while creating a forced identifier: {e}")
+    
+import sqlite3
+    
 def add_identifier(conn, cursor, phrase, category_id):
     try:
         cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?)', (phrase, category_id,))
@@ -44,4 +54,16 @@ def add_identifier(conn, cursor, phrase, category_id):
         conn.commit()
     except sqlite3.Error as e:
         raise RuntimeError(f'An error occurred while adding a new identifier: {e}')
+    
+def add_forced_identifier(cursor, category_id):
+    try:
+        string = f'This is a forced identifier for category: {category_id}'
+        cursor.execute('INSERT INTO identifiers (phrase, category_id) VALUES (?, ?)', (string, category_id))
+
+        identifier_id = cursor.lastrowid
+        cursor.execute('SELECT * FROM identifiers WHERE id = ?', (identifier_id,))
+        return cursor.fetchone()
+    
+    except sqlite3.Error as e:
+        raise RuntimeError(f"An error occurred while creating a forced identifier: {e}")
 

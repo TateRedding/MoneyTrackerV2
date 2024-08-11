@@ -6,15 +6,15 @@ import database.categories as cats
 import database.identifiers as idens
 
 class IdentifyTransactions:
-    def __init__(self, parent, conn, cursor, transaction_data, category_data, update_categories, update_identifiers, update_transactions):
+    def __init__(self, parent, conn, cursor, transaction_data, category_data, update_category_data, update_identifier_data, update_transaction_data):
         self.frame = ttk.Frame(parent)
         self.conn = conn
         self.cursor = cursor
         self.transaction_data = transaction_data
         self.category_data = category_data
-        self.update_categories = update_categories
-        self.update_identifiers = update_identifiers
-        self.update_transactions = update_transactions
+        self.update_category_data = update_category_data
+        self.update_identifier_data = update_identifier_data
+        self.update_transaction_data = update_transaction_data
 
         self.parent_categories = []
         self.parent_category_map = {}
@@ -89,8 +89,7 @@ class IdentifyTransactions:
         if selected_parent_category:
             self.add_child_category_button.config(text=f'Add child category for {selected_parent_category}', state=tk.NORMAL)
             self.child_category_map = {category[1]: category[0] for category in self.category_data if category[4] == selected_parent_category}
-            child_categories = list(self.child_category_map.keys())
-            child_categories.sort()
+            child_categories = sorted(list(self.child_category_map.keys()))
             self.child_category_dropdown['values'] = ['None'] + child_categories
             self.child_category_var.set(value='None')
         self.check_inputs()
@@ -111,8 +110,7 @@ class IdentifyTransactions:
     def update_parent_categories(self):
         if self.category_data:
             self.parent_category_map = {category[1]: category[0] for category in self.category_data if not category[3]}
-            self.parent_categories = list(self.parent_category_map.keys())
-            self.parent_categories.sort()
+            self.parent_categories = sorted(list(self.parent_category_map.keys()))
             self.parent_category_dropdown['values'] = self.parent_categories
 
     def check_inputs(self, *args):
@@ -126,7 +124,7 @@ class IdentifyTransactions:
         if name:
             if not bool(cats.get_category_by_name(self.cursor, name)):
                 cats.add_category(self.conn, self.cursor, name, None, type)
-                self.update_categories()
+                self.update_category_data()
                 self.parent_category_var.set(value=name)
                 self.on_parent_category_selected()
             else:
@@ -146,7 +144,7 @@ class IdentifyTransactions:
                 if parent_id:
                     if not bool(cats.get_category_by_name(self.cursor, name)):
                         cats.add_category(self.conn, self.cursor, name, parent_id, None)
-                        self.update_categories()
+                        self.update_category_data()
                         self.on_parent_category_selected()
                         self.child_category_var.set(name)
                     else:
@@ -181,11 +179,11 @@ class IdentifyTransactions:
         if phrase and category_id:
             if not bool(idens.get_identifier_by_phrase(self.cursor, phrase)):
                 idens.add_identifier(self.conn, self.cursor, phrase, category_id)
-                self.update_transactions()
+                self.update_transaction_data()
                 messagebox.showinfo('Success', f"Identifier '{phrase}' added for the category {child_category_name if child_category_name and not child_category_name == 'None' else parent_category_name}.")
                 self.reset_form()
-                self.update_identifiers()
-                self.update_transactions()
+                self.update_identifier_data()
+                self.update_transaction_data()
             else:
                 messagebox.showinfo('Info', f"Identifier '{phrase}' already exists.")
         else:

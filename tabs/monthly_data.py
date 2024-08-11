@@ -6,19 +6,24 @@ from tabs.averages_over_time import AveragesOverTime
 from tabs.totals_by_month import TotalsByMonth
 
 class MonthlyData:
-    def __init__(self, parent, cursor):
+    def __init__(self, parent, cursor, category_data):
         self.frame = tk.Frame(parent)
         self.cursor = cursor
+        self.category_data = category_data
         self.setup_tab()
 
     def setup_tab(self):
         self.notebook = ttk.Notebook(self.frame)
         self.totals = TotalsByMonth(self.notebook, self.cursor)
-        self.averages = AveragesOverTime(self.notebook, self.cursor)
+        self.averages = AveragesOverTime(self.notebook, self.cursor, self.category_data)
         
         self.notebook.add(self.totals.frame, text="Totals by Month")
         self.notebook.add(self.averages.frame, text="Averages Over Time")
         self.notebook.pack(expand=1, fill='both')
+
+    def update_category_data(self):
+        self.averages.category_data = self.category_data
+        self.averages.update_category_data()
 
 def get_month_map(cursor):
     month_map = {}
@@ -39,3 +44,4 @@ def update_month_dropdown(menu, month_map):
     menu['values'] = month_names
     if month_names:
         menu.set(month_names[0])
+        

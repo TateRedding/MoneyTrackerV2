@@ -5,16 +5,18 @@ import database.transactions as trans
 import tabs.monthly_data as monthly
 
 class AveragesOverTime:
-    def __init__(self, parent, cursor):
+    def __init__(self, parent, cursor, category_data):
         self.frame = tk.Frame(parent)
         self.cursor = cursor
+        self.category_data = category_data
         self.month_map = monthly.get_month_map(self.cursor)
         self.selected_start_month = None
         self.selected_end_month = None
-        self.parent_categories = [row[1] for row in cats.get_all_categories(self.cursor) if not row[3]]
-        if self.parent_categories:
-            self.parent_categories.sort()
+        self.parent_categories = []
+        
         self.setup_tab()
+
+        self.update_category_data()
 
     def setup_tab(self):
         selection_frame = tk.Frame(self.frame)
@@ -75,3 +77,7 @@ class AveragesOverTime:
             values = (category_name,) + tuple(month_values) + (f'${average:,.2f}',)
             
             self.tree.insert("", tk.END, text="1", values=values)
+
+    def update_category_data(self):
+        self.parent_categories = sorted([row[1] for row in self.category_data if not row[3]])
+        self.on_month_selected()
