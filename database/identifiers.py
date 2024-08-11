@@ -66,4 +66,11 @@ def add_forced_identifier(cursor, category_id):
     
     except sqlite3.Error as e:
         raise RuntimeError(f"An error occurred while creating a forced identifier: {e}")
+    
+def update_identifier(conn, cursor, identifier_id, catgeory_id):
+    try:
+        cursor.execute('UPDATE identifiers SET category_id = ? WHERE id = ?', (catgeory_id, identifier_id))
+        conn.commit()
+    except sqlite3.Error as e:
+        raise RuntimeError(f'An error occured while updating identifier: {e}')
 

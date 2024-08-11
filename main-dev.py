@@ -42,7 +42,7 @@ class App:
 
     def create_tabs(self):
         self.all_categories = AllCategories(self.notebook, self.category_data)
-        self.all_identifiers = AllIdentifiers(self.notebook, self.identifier_data)
+        self.all_identifiers = AllIdentifiers(self.notebook, self.conn, self.cursor, self.identifier_data, self.category_data, self.update_identifier_data, self.update_transaction_data)
         self.all_transactions = AllTransactions(self.notebook, self.conn, self.cursor, self.transaction_data, self.category_data, self.update_transaction_data, self.update_identifier_data)
         self.identify_transactions = IdentifyTransactions(self.notebook, self.conn, self.cursor, self.transaction_data, self.category_data, self.update_category_data, self.update_identifier_data, self.update_transaction_data)
         self.monthly_data = MonthlyData(self.notebook, self.cursor, self.category_data)
@@ -61,6 +61,7 @@ class App:
     def update_category_data(self):
         self.category_data = cats.get_all_categories(self.cursor)
         self.all_categories.category_data = self.category_data
+        self.all_identifiers.category_data = self.category_data
         self.all_transactions.category_data = self.category_data
         self.identify_transactions.category_data = self.category_data
         self.monthly_data.category_data = self.category_data
