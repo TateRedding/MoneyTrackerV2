@@ -17,6 +17,42 @@ def get_all_transactions(cursor):
         return cursor.fetchall()
     except sqlite3.Error as e:
         raise RuntimeError(f'Error fetching transactions: {e}')
+    
+def get_month_range(cursor):
+    try:
+        cursor.execute('''
+            SELECT DISTINCT strftime('%Y-%m', date) AS month
+            FROM transactions
+            ORDER BY month;
+        ''')
+        return [row[0] for row in cursor.fetchall()]
+    except sqlite3.Error as e:
+        raise RuntimeError(f"An error occurred while fetching available months: {e}")
+    
+def get_totals_by_month(cursor, selected_month):
+    try:
+        cursor.execute('''
+            SELECT c.name AS category_name, p.name AS parent_category_name,
+            CASE 
+                WHEN c.parent_id IS NOT NULL THEN p.type 
+                ELSE c.type 
+            END AS type,
+            SUM(t.amount) AS total_amount
+            FROM transactions t
+            JOIN identifiers i
+                ON t.identifier_id = i.id
+            JOIN categories c
+                ON i.category_id = c.id
+            LEFT JOIN categories p
+                ON c.parent_id = p.id
+            WHERE strftime('%Y-%m', t.date) = ?
+            GROUP BY c.id
+            ORDER BY c.name;
+        ''', (selected_month,))
+        subcategory_totals = cursor.fetchall()
+        return subcategory_totals
+    except sqlite3.Error as e:
+        raise RuntimeError(f"An error occurred while fetching totals: {e}")
 
 def add_transactions(conn, cursor, data):
     try:

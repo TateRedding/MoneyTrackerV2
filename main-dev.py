@@ -10,6 +10,7 @@ from tabs.all_categories import AllCategories
 from tabs.all_identifiers import AllIdentifiers
 from tabs.all_transactions import AllTransactions
 from tabs.identify_transactions import IdentifyTransactions
+from tabs.monthly_data import MonthlyData
 from tabs.sql import SQL
 from tabs.upload import Upload
 
@@ -44,12 +45,14 @@ class App:
         self.all_identifiers = AllIdentifiers(self.notebook, self.identifier_data)
         self.all_transactions = AllTransactions(self.notebook, self.transaction_data)
         self.identify_transactions = IdentifyTransactions(self.notebook, self.conn, self.cursor, self.transaction_data, self.category_data, self.update_catagories, self.update_identifiers, self.update_transactions)
+        self.monthly_data = MonthlyData(self.notebook, self.cursor)
         self.sql = SQL(self.notebook, self.conn, self.cursor)
         self.upload = Upload(self.notebook, self.conn, self.cursor, self.account_data, self.update_transactions)
 
         self.notebook.add(self.all_transactions.frame, text='Transactions')
         self.notebook.add(self.upload.frame, text='Upload')
         self.notebook.add(self.identify_transactions.frame, text='Identify Transactions')
+        self.notebook.add(self.monthly_data.frame, text='Monthly Data')
         self.notebook.add(self.all_categories.frame, text='Categories')
         self.notebook.add(self.all_identifiers.frame, text='Identifiers')
         self.notebook.add(self.sql.frame, text='SQL')
