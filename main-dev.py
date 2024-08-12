@@ -22,7 +22,7 @@ class App:
         self.conn = sqlite3.connect('money-tracker-dev.db')
         self.cursor = self.conn.cursor()
 
-        #setup.init_db(self.conn, self.cursor)
+        setup.init_db(self.conn, self.cursor)
 
         self.notebook = ttk.Notebook(self.root)
         self.notebook.pack(fill='both', expand=True)
