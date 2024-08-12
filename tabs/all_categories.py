@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import database.categories as cats
+from popups.child_category_popup import ChildCategoryPopup
 from popups.parent_category_popup import ParentCategoryPopup
 
 class AllCategories:
@@ -65,7 +66,15 @@ class AllCategories:
             self.edit_child_category_button.config(state='normal')
     
     def update_child_category(self, event=None):
-        return
+        name, parent_id = self.prompt_to_change_child_category()
+        if not (name == self.selected_child_row_data[1] and parent_id == self.selected_child_row_data[2]):
+            cats.update_category(self.conn, self.cursor, self.selected_child_row_data[0], name, parent_id, None)
+            self.update_data()
+
+    def prompt_to_change_child_category(self):
+        edit_child_category_popup = ChildCategoryPopup(self.frame, self.cursor, self.category_data, self.selected_child_row_data[0])
+        self.frame.wait_window(edit_child_category_popup.top)
+        return edit_child_category_popup.name, edit_child_category_popup.parent_id
     
     def on_parent_row_select(self, event=None):
         selected_item = self.parent_tree.selection()

@@ -3,9 +3,10 @@ import sqlite3
 def get_all_categories(cursor):
     try:
         cursor.execute('''
-        SELECT c.*, p.name FROM categories AS c
-        LEFT JOIN categories AS p
-            ON c.parent_id = p.id;
+            SELECT c.*, p.name
+            FROM categories AS c
+            LEFT JOIN categories AS p
+                ON c.parent_id = p.id;
         ''')
         return cursor.fetchall()
     except sqlite3.Error as e:
@@ -13,7 +14,13 @@ def get_all_categories(cursor):
 
 def get_category_by_id(cursor, id):
     try:
-        cursor.execute('SELECT * FROM categories WHERE id = ?;', (id,))
+        cursor.execute('''
+            SELECT c.*, p.name
+            FROM categories AS c
+            LEFT JOIN categories AS p
+                ON c.parent_id = p.id
+            WHERE c.id = ?;
+        ''', (id,))
         return cursor.fetchone()
     except sqlite3.Error as e:
         raise RuntimeError(f'Error fetching category: {e}')
