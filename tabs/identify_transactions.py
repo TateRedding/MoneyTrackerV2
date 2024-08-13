@@ -25,6 +25,9 @@ class IdentifyTransactions:
     def setup_tab(self):
         tk.Label(self.frame, text='Unknown Transactions').pack(pady=10)
 
+        self.remaining_label = tk.Label(self.frame, text='Remaining: N/A')
+        self.remaining_label.pack(pady=10)
+
         self.tree = ttk.Treeview(self.frame, columns=('Date', 'Amount', 'Description', 'Account'), show='headings')
         self.tree.heading('Date', text='Date')
         self.tree.heading('Amount', text='Amount')
@@ -98,14 +101,18 @@ class IdentifyTransactions:
         for item in self.tree.get_children():
             self.tree.delete(item)
         
+        count = 0
         for row in self.transaction_data:
             if row[7] == 'Unknown':
+                count += 1
                 date = datetime.strptime(row[3], '%Y-%m-%d').strftime('%b %d, %Y')
                 amount = f'${row[1]}'
                 desc = row[2]
                 acc = row[6]
                 tree_values = [date, amount, desc, acc]
                 self.tree.insert('', tk.END, values=tree_values)
+
+        self.remaining_label.config(text=f'Remaining: {count}')
 
     def update_parent_categories(self):
         if self.category_data:

@@ -31,7 +31,7 @@ class ParentCategoryPopup:
         
         tk.Label(self.type_frame, text='Select category type:').pack(anchor='w')
         for type in all_types:
-            tk.Radiobutton(self.type_frame, text=type.capitalize(), variable=self.type_var, value=type).pack(anchor='w')
+            tk.Radiobutton(self.type_frame, text=type.title(), variable=self.type_var, value=type).pack(anchor='w')
 
         self.ok_button = tk.Button(self.top, text='OK', command=self.on_ok)
         self.ok_button.pack(pady=10)

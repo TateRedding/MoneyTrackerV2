@@ -22,7 +22,7 @@ class Upload:
         self.account_map = {name: id for id, name, type in self.account_data}
         self.account_dropdown = ttk.Combobox(self.frame, textvariable=self.account_var)
         self.account_dropdown['values'] = [account[1] for account in self.account_data]
-        self.account_dropdown.bind('<<ComboBoxSelection>>', self.check_inputs)
+        self.account_dropdown.bind('<<ComboboxSelected>>', self.check_inputs)
         self.account_dropdown.pack(pady=10)
 
         tk.Label(self.frame, text='Choose a file').pack(pady=10)

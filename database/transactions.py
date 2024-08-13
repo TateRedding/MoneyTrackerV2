@@ -34,15 +34,16 @@ def get_totals_by_month(cursor, selected_month):
     try:
         cursor.execute('''
             SELECT c.name AS category_name, p.name AS parent_category_name,
-            CASE 
+            CASE
+                WHEN t.identifier_id IS NULL THEN 'None'
                 WHEN c.parent_id IS NOT NULL THEN p.type 
                 ELSE c.type 
             END AS type,
             SUM(t.amount) AS total_amount
             FROM transactions t
-            JOIN identifiers i
+            LEFT JOIN identifiers i
                 ON t.identifier_id = i.id
-            JOIN categories c
+            LEFT JOIN categories c
                 ON i.category_id = c.id
             LEFT JOIN categories p
                 ON c.parent_id = p.id
@@ -62,14 +63,15 @@ def get_monthly_totals_with_range(cursor, start_month, end_month):
             WITH monthly_totals AS (
                 SELECT
                     strftime('%Y-%m', t.date) AS month,
-                    CASE 
+                    CASE
+                        WHEN t.identifier_id IS NULL THEN 'Unknown'
                         WHEN c.parent_id IS NOT NULL THEN p.name 
                         ELSE c.name
                     END AS parent_category_name,
                     SUM(t.amount) AS total_amount
                 FROM transactions t
-                JOIN identifiers i ON t.identifier_id = i.id
-                JOIN categories c ON i.category_id = c.id
+                LEFT JOIN identifiers i ON t.identifier_id = i.id
+                LEFT JOIN categories c ON i.category_id = c.id
                 LEFT JOIN categories p on c.parent_id = p.id
                 WHERE strftime('%Y-%m', t.date) BETWEEN ? AND ?
                 GROUP BY month, parent_category_name

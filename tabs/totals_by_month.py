@@ -37,7 +37,7 @@ class TotalsByMonth:
         types = data.keys()
 
         for i, type_name in enumerate(types):
-            type_label = tk.Label(self.treeview_frame, text=type_name.capitalize(), font=('TkDefaultFont', 16, 'bold'))
+            type_label = tk.Label(self.treeview_frame, text=type_name.title(), font=('TkDefaultFont', 16, 'bold'))
             type_label.grid(row=0, column=i, padx=10, pady=5, sticky='ew')
 
             total_label = tk.Label(self.treeview_frame, text=f"${data[type_name]['total']:,.2f}", font=('TkDefaultFont', 14, 'bold'))
@@ -46,8 +46,8 @@ class TotalsByMonth:
             treeview = ttk.Treeview(self.treeview_frame, columns=('Category', 'Amount'), show='headings')
             treeview.heading('Category', text='Category')
             treeview.heading('Amount', text='Amount')
-            treeview.column('Category', width=300, stretch=False)
-            treeview.column('Amount', width=150, stretch=False)
+            treeview.column('Category', width=225, stretch=False)
+            treeview.column('Amount', width=125, stretch=False)
             treeview.grid(row=2, column=i, padx=5, pady=5, sticky='ns')
             self.treeview_frame.grid_rowconfigure(2, weight=1)
 

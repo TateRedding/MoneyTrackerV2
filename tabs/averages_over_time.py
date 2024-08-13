@@ -63,21 +63,22 @@ class AveragesOverTime:
 
         month_strings = [key for key, value in self.month_map.items() if value in months]
         columns = ['Category'] + month_strings + ['Average']
-        self.tree["columns"] = columns
+        self.tree['columns'] = columns
 
         for col in columns:
             self.tree.heading(col, text=col)
             self.tree.column(col, width=100, anchor=tk.W)
 
         for category in self.parent_categories:
-            category_name = category.capitalize()
+            category_name = category.title()
             month_values = [f'${totals.get(month, {}).get(category, 0):,.2f}' for month in months]
             grand_total = sum(totals.get(month, {}).get(category, 0) for month in months)
             average = grand_total / len(months) if months else 0
             values = (category_name,) + tuple(month_values) + (f'${average:,.2f}',)
             
-            self.tree.insert("", tk.END, text="1", values=values)
+            self.tree.insert('', tk.END, text='1', values=values)
 
     def update_category_data(self):
-        self.parent_categories = sorted([row[1] for row in self.category_data if not row[3]])
+        
+        self.parent_categories = sorted(['Unknown'] + [row[1] for row in self.category_data if not row[3]])
         self.on_month_selected()
