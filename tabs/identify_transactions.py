@@ -40,7 +40,7 @@ class IdentifyTransactions:
         self.tree.column('Account', width=170, stretch=False)
 
         self.tree.bind('<<TreeviewSelect>>', self.on_row_select)
-        self.tree.pack(fill=tk.Y, expand=True, padx=20, pady=10, anchor='center')
+        self.tree.pack(fill='y', expand=True, padx=20, pady=10, anchor='center')
 
         self.update_unidentified_transactions()
 

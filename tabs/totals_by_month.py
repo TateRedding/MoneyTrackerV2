@@ -14,7 +14,7 @@ class TotalsByMonth:
 
     def setup_tab(self):
         self.frame = tk.Frame(self.parent)
-        self.frame.pack(fill=tk.BOTH, expand=True)
+        self.frame.pack(fill='both', expand=True)
 
         tk.Label(self.frame, text='Select Month:').pack(padx=10, pady=5)
         
@@ -23,7 +23,7 @@ class TotalsByMonth:
         self.month_dropdown.pack(padx=10, pady=5)
 
         self.treeview_frame = tk.Frame(self.frame)
-        self.treeview_frame.pack(fill=tk.BOTH, expand=True)
+        self.treeview_frame.pack(fill='both', expand=True)
 
         self.treeviews = {}
 

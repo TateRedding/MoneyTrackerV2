@@ -68,6 +68,7 @@ class App:
         self.monthly_data.category_data = self.category_data
 
         self.all_categories.update_categories()
+        self.all_transactions.load_categories()
         self.identify_transactions.update_parent_categories()
         self.monthly_data.update_category_data()
     

@@ -36,7 +36,7 @@ class AveragesOverTime:
         self.end_month_dropdown.grid(row=1, column=1, padx=(10, 0))
 
         self.tree = ttk.Treeview(self.frame, columns=[], show='headings')
-        self.tree.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        self.tree.pack(padx=10, pady=10, fill='both', expand=True)
     
     def on_month_selected(self, event=None):
         start_display_month = self.start_month_var.get()

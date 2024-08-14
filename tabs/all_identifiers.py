@@ -35,7 +35,7 @@ class AllIdentifiers:
         self.tree.bind('<<TreeviewSelect>>', self.on_row_select)
         self.update_identifiers()
 
-        self.tree.pack(fill=tk.Y, expand=True, padx=20, pady=10, anchor='center')
+        self.tree.pack(fill='y', expand=True, padx=20, pady=10, anchor='center')
     
     def on_row_select(self, event=None):
         selected_item = self.tree.selection()

@@ -19,7 +19,7 @@ class SQL:
         self.execute_button.pack(pady=10)
         
         self.tree = ttk.Treeview(self.frame, columns=[], show='headings')
-        self.tree.pack(padx=20, pady=10, fill=tk.BOTH, expand=True)
+        self.tree.pack(padx=20, pady=10, fill='both', expand=True)
 
     def execute_query(self):
         query = self.textbox.get('1.0', tk.END).strip()

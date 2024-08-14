@@ -58,7 +58,7 @@ class AllCategories:
 
         self.update_categories()
 
-        self.frame.pack(fill=tk.BOTH, expand=True)
+        self.frame.pack(fill='both', expand=True)
 
     def on_child_category_row_select(self, event=None):
         selected_item = self.child_tree.selection()
