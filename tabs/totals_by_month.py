@@ -34,7 +34,8 @@ class TotalsByMonth:
             widget.destroy()
 
         data = self.get_data()
-        types = data.keys()
+        types = sorted(data.keys())
+        types.reverse()
 
         for i, type_name in enumerate(types):
             type_label = tk.Label(self.treeview_frame, text=type_name.title(), font=('TkDefaultFont', 16, 'bold'))

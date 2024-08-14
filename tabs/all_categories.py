@@ -19,6 +19,7 @@ class AllCategories:
     def setup_tab(self):
         self.frame.columnconfigure(0, weight=1)
         self.frame.columnconfigure(1, weight=1)
+        self.frame.rowconfigure(2, weight=1)
 
         tk.Label(self.frame, text='Child Categories').grid(row=0, column=0, pady=10)
         self.edit_child_category_button = ttk.Button(self.frame, text="Edit Child Category", command=self.update_child_category, state='disabled')
@@ -33,7 +34,7 @@ class AllCategories:
         self.child_tree.column('Category', width=300, stretch=False)
         self.child_tree.column('Parent Category', width=300, stretch=False)
 
-        self.child_tree.grid(row=2, column=0, sticky='ns')
+        self.child_tree.grid(row=2, column=0, pady=10, sticky='ns')
 
         self.child_tree.bind('<<TreeviewSelect>>', self.on_child_category_row_select)
 
@@ -51,7 +52,7 @@ class AllCategories:
         self.parent_tree.column('Category', width=300, stretch=False)
         self.parent_tree.column('Type', width=200, stretch=False)
 
-        self.parent_tree.grid(row=2, column=1, sticky='ns')
+        self.parent_tree.grid(row=2, column=1, pady=10, sticky='ns')
 
         self.parent_tree.bind('<<TreeviewSelect>>', self.on_parent_row_select)
 
