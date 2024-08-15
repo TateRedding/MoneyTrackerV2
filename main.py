@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 import sqlite3
-import database.db_setup as setup
 import database.accounts as accs
 import database.categories as cats
 import database.identifiers as idens
@@ -84,7 +83,10 @@ class App:
         self.identify_transactions.transaction_data = self.transaction_data
 
         self.all_transactions.update_transactions()
+        self.all_transactions.update_month_data()
         self.identify_transactions.update_unidentified_transactions()
+        self.monthly_data.totals.update_month_data()
+        self.monthly_data.averages.update_month_data()
 
     def update_database(self, conn, cursor):
         # update_v1(conn, cursor)

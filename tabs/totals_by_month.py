@@ -27,7 +27,7 @@ class TotalsByMonth:
 
         self.treeviews = {}
 
-        self.update_monthly_data()
+        self.update_month_data()
 
     def update_treeviews(self):
         for widget in self.treeview_frame.winfo_children():
@@ -97,7 +97,7 @@ class TotalsByMonth:
             self.selected_month = self.month_map[display_month]
             self.update_treeviews()
 
-    def update_monthly_data(self):
+    def update_month_data(self):
         self.month_map = monthly.get_month_map(self.cursor)
         monthly.update_month_dropdown(self.month_dropdown, self.month_map)
         if self.selected_month in self.month_map.values():

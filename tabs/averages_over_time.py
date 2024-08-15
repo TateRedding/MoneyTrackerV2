@@ -22,7 +22,6 @@ class AveragesOverTime:
         selection_frame = tk.Frame(self.frame)
         selection_frame.pack(pady=10)
 
-
         tk.Label(selection_frame, text='Select Start Month').grid(row=0, column=0, padx=(0, 10))
         self.start_month_var = tk.StringVar()
         self.start_month_dropdown = monthly.setup_month_dropdown(selection_frame, self.start_month_var, self.month_map, self.on_month_selected)
@@ -79,6 +78,10 @@ class AveragesOverTime:
             self.tree.insert('', tk.END, text='1', values=values)
 
     def update_category_data(self):
-        
         self.parent_categories = sorted(['Unknown'] + [row[1] for row in self.category_data if not row[3]])
         self.on_month_selected()
+
+    def update_month_data(self):
+        self.month_map = monthly.get_month_map(self.cursor)
+        monthly.update_month_dropdown(self.start_month_dropdown, self.month_map)
+        monthly.update_month_dropdown(self.end_month_dropdown, self.month_map)

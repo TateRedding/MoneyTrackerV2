@@ -40,9 +40,9 @@ def setup_month_dropdown(frame, month_var, month_map, on_month_selected):
     month_dropdown.bind("<<ComboboxSelected>>", on_month_selected)
     return month_dropdown
 
-def update_month_dropdown(menu, month_map):
+def update_month_dropdown(dropdown, month_map):
     month_names = list(month_map.keys())
-    menu['values'] = month_names
+    dropdown['values'] = month_names
     if month_names:
-        menu.set(month_names[0])
+        dropdown.set(month_names[0])
         
