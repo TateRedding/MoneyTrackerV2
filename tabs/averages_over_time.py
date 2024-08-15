@@ -3,6 +3,7 @@ from tkinter import ttk
 import database.categories as cats
 import database.transactions as trans
 import tabs.monthly_data as monthly
+from utils.utility_functions import sort_tree
 
 class AveragesOverTime:
     def __init__(self, parent, cursor, category_data):
@@ -65,7 +66,7 @@ class AveragesOverTime:
         self.tree['columns'] = columns
 
         for col in columns:
-            self.tree.heading(col, text=col)
+            self.tree.heading(col, text=col, command=lambda c=col: sort_tree(self.tree, c, False))
             self.tree.column(col, width=100, anchor=tk.W)
 
         for category in self.parent_categories:

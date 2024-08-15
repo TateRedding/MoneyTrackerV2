@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import database.identifiers as idens
 from popups.change_category_popup import ChangeCategoryPopup
+from utils.utility_functions import sort_tree
 
 class AllIdentifiers:
     def __init__(self, parent, conn, cursor, identifier_data, category_data, update_identifier_data, update_transaction_data):
@@ -22,10 +23,10 @@ class AllIdentifiers:
         self.edit_category_button.pack(pady=10)
 
         self.tree = ttk.Treeview(self.frame, columns=('ID', 'Phrase', 'Category', 'Parent Category'), show='headings')
-        self.tree.heading('ID', text='ID')
-        self.tree.heading('Phrase', text='Phrase')
-        self.tree.heading('Category', text='Category')
-        self.tree.heading('Parent Category', text='Parent Category')
+        self.tree.heading('ID', text='ID', command=lambda: sort_tree(self.tree, 'ID', False))
+        self.tree.heading('Phrase', text='Phrase', command=lambda: sort_tree(self.tree, 'Phrase', False))
+        self.tree.heading('Category', text='Category', command=lambda: sort_tree(self.tree, 'Category', False))
+        self.tree.heading('Parent Category', text='Parent Category', command=lambda: sort_tree(self.tree, 'Parent Category', False))
 
         self.tree.column('ID', width=80, stretch=False)
         self.tree.column('Phrase', width=500, stretch=False)

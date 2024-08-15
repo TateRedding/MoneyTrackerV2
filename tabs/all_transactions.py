@@ -4,6 +4,7 @@ from datetime import datetime
 import database.transactions as trans
 import tabs.monthly_data as monthly
 from popups.change_category_popup import ChangeCategoryPopup
+from utils.utility_functions import sort_tree
 
 class AllTransactions:
     def __init__(self, parent, conn, cursor, transaction_data, category_data, update_transaction_data, update_identifier_data):
@@ -59,12 +60,12 @@ class AllTransactions:
 
     def setup_tree(self):
         self.tree = ttk.Treeview(self.frame, columns=('ID', 'Date', 'Amount', 'Category', 'Parent Category', 'Description', 'Account'), show='headings')
-        self.tree.heading('Date', text='Date', command=lambda: self.sort_tree('Date', False))
-        self.tree.heading('Amount', text='Amount', command=lambda: self.sort_tree('Amount', False))
-        self.tree.heading('Category', text='Category', command=lambda: self.sort_tree('Category', False))
-        self.tree.heading('Parent Category', text='Parent Category', command=lambda: self.sort_tree('Parent Category', False))
-        self.tree.heading('Description', text='Description', command=lambda: self.sort_tree('Description', False))
-        self.tree.heading('Account', text='Account', command=lambda: self.sort_tree('Account', False))
+        self.tree.heading('Date', text='Date', command=lambda: sort_tree(self.tree, 'Date', False))
+        self.tree.heading('Amount', text='Amount', command=lambda: sort_tree(self.tree, 'Amount', False))
+        self.tree.heading('Category', text='Category', command=lambda: sort_tree(self.tree, 'Category', False))
+        self.tree.heading('Parent Category', text='Parent Category', command=lambda: sort_tree(self.tree, 'Parent Category', False))
+        self.tree.heading('Description', text='Description', command=lambda: sort_tree(self.tree, 'Description', False))
+        self.tree.heading('Account', text='Account', command=lambda: sort_tree(self.tree, 'Account', False))
 
         self.tree.column('ID', width=0, stretch=False)
         self.tree.column('Date', width=100, stretch=False)
@@ -117,22 +118,6 @@ class AllTransactions:
                 self.edit_category_button.config(state='normal')
             else:
                 self.edit_category_button.config(state='disabled')
-
-    def sort_tree(self, col, reverse):
-        items = [(self.tree.set(row, col), row) for row in self.tree.get_children('')]
-        
-        try:
-            items.sort(key=lambda t: int(t[0]), reverse=reverse)
-        except ValueError:
-            try:
-                items.sort(key=lambda t: datetime.strptime(t[0], "%b %d, %Y"), reverse=reverse)
-            except ValueError:
-                items.sort(key=lambda t: t[0], reverse=reverse)
-
-        for index, (val, row) in enumerate(items):
-            self.tree.move(row, '', index)
-
-        self.tree.heading(col, command=lambda: self.sort_tree(col, not reverse))
     
     def update_transactions(self, data=None):
         if not data:

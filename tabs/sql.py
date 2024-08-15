@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import sqlite3
+from utils.utility_functions import sort_tree
 
 class SQL:
     def __init__(self, parent, conn, cursor):
@@ -48,7 +49,7 @@ class SQL:
 
         self.tree['columns'] = [desc[0] for desc in self.cursor.description]
         for col in self.tree['columns']:
-            self.tree.heading(col, text=col.upper())
+            self.tree.heading(col, text=col.upper(), command=lambda c=col: sort_tree(self.tree, c, False))
             self.tree.column(col, width=100, anchor='center')
 
         for row in rows:

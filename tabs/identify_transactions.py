@@ -4,6 +4,7 @@ from datetime import datetime
 from popups.parent_category_popup import ParentCategoryPopup
 import database.categories as cats
 import database.identifiers as idens
+from utils.utility_functions import sort_tree
 
 class IdentifyTransactions:
     def __init__(self, parent, conn, cursor, transaction_data, category_data, update_category_data, update_identifier_data, update_transaction_data):
@@ -29,10 +30,10 @@ class IdentifyTransactions:
         self.remaining_label.pack(pady=10)
 
         self.tree = ttk.Treeview(self.frame, columns=('Date', 'Amount', 'Description', 'Account'), show='headings')
-        self.tree.heading('Date', text='Date')
-        self.tree.heading('Amount', text='Amount')
-        self.tree.heading('Description', text='Description')
-        self.tree.heading('Account', text='Account')
+        self.tree.heading('Date', text='Date', command=lambda: sort_tree(self.tree, 'Date', False))
+        self.tree.heading('Amount', text='Amount', command=lambda: sort_tree(self.tree, 'Amount', False))
+        self.tree.heading('Description', text='Description', command=lambda: sort_tree(self.tree, 'Description', False))
+        self.tree.heading('Account', text='Account', command=lambda: sort_tree(self.tree, 'Account', False))
 
         self.tree.column('Date', width=100, stretch=False)
         self.tree.column('Amount', width=80, stretch=False)

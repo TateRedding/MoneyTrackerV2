@@ -3,6 +3,7 @@ from tkinter import ttk
 import database.categories as cats
 from popups.child_category_popup import ChildCategoryPopup
 from popups.parent_category_popup import ParentCategoryPopup
+from utils.utility_functions import sort_tree
 
 class AllCategories:
     def __init__(self, parent, conn, cursor, category_data, update_category_data, update_identifier_data, update_transaction_data):
@@ -26,9 +27,9 @@ class AllCategories:
         self.edit_child_category_button.grid(row=1, column=0, pady=10)
 
         self.child_tree = ttk.Treeview(self.frame, columns=('ID', 'Category', 'Parent Category'), show='headings')
-        self.child_tree.heading('ID', text='ID')
-        self.child_tree.heading('Category', text='Category')
-        self.child_tree.heading('Parent Category', text='Parent Category')
+        self.child_tree.heading('ID', text='ID', command=lambda: sort_tree(self.child_tree, 'ID', False))
+        self.child_tree.heading('Category', text='Category', command=lambda: sort_tree(self.child_tree, 'Category', False))
+        self.child_tree.heading('Parent Category', text='Parent Category', command=lambda: sort_tree(self.child_tree, 'Parent Category', False))
 
         self.child_tree.column('ID', width=80, stretch=False)
         self.child_tree.column('Category', width=300, stretch=False)
@@ -44,9 +45,9 @@ class AllCategories:
         self.edit_parent_category_button.grid(row=1, column=1, pady=10)
 
         self.parent_tree = ttk.Treeview(self.frame, columns=('ID', 'Category', 'Type'), show='headings')
-        self.parent_tree.heading('ID', text='ID')
-        self.parent_tree.heading('Category', text='Category')
-        self.parent_tree.heading('Type', text='Type')
+        self.parent_tree.heading('ID', text='ID', command=lambda: sort_tree(self.parent_tree, 'ID', False))
+        self.parent_tree.heading('Category', text='Category', command=lambda: sort_tree(self.parent_tree, 'Category', False))
+        self.parent_tree.heading('Type', text='Type', command=lambda: sort_tree(self.parent_tree, 'Type', False))
 
         self.parent_tree.column('ID', width=80, stretch=False)
         self.parent_tree.column('Category', width=300, stretch=False)
